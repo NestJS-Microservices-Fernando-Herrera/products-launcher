@@ -1,12 +1,14 @@
-version: '3'
+version: "3"
 
 services:
-
   nats-server:
     image: nats:latest
     ports:
       - 8222:8222
 
+  # ==============
+  # Client Gateway
+  # ==============
   client-gateway:
     build: ./client-gateway
     ports:
@@ -20,6 +22,9 @@ services:
       - PORT=3000
       - NATS_SERVERS=nats://nats-server:4222
 
+  # =====================
+  # Products Microservice
+  # =====================
   products-ms:
     build: ./products-ms
     volumes:
@@ -32,6 +37,9 @@ services:
     #   - DATABASE_URL=file:./dev.db
     #   - NATS_SERVERS=nats://nats-server:4222
 
+  # =====================
+  # Orders Microservice
+  # =====================
   orders-ms:
     depends_on:
       - orders-db
@@ -57,3 +65,26 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=ordersdb
+
+  # =====================
+  # Payments Microservice
+  # =====================
+  payments-ms:
+    container_name: payments-ms
+    build: ./payments-ms
+    ports:
+      - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
+    volumes:
+      - ./payments-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    env_file:
+      - ./payments-ms/.env.dev
+    # environment:
+    #   - PORT=${PAYMENTS_MS_PORT}
+    #   - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+    #   - PAYPAL_SECRET=${PAYPAL_SECRET}
+    #   - PAYPAL_SUCCESS_URL=${PAYPAL_SUCCESS_URL}
+    #   - PAYPAL_CANCEL_URL=${PAYPAL_CANCEL_URL}
+    #   - PAYPAL_WEBHOOK_ID=${PAYPAL_WEBHOOK_ID}
+    #   - PAYPAL_API_URL=${PAYPAL_API_URL}
+    #   - PAYPAL_API_VERIFY_WEBHOOK_SIGNATURE=${PAYPAL_API_VERIFY_WEBHOOK_SIGNATURE}
