@@ -7,7 +7,7 @@ services:
       - 8222:8222
 
   # ==============
-  # Client Gateway
+  # region Client Gateway
   # ==============
   client-gateway:
     build: ./client-gateway
@@ -23,7 +23,7 @@ services:
       - NATS_SERVERS=nats://nats-server:4222
 
   # =====================
-  # Products Microservice
+  # region Products Microservice
   # =====================
   products-ms:
     build: ./products-ms
@@ -38,7 +38,7 @@ services:
     #   - NATS_SERVERS=nats://nats-server:4222
 
   # =====================
-  # Orders Microservice
+  # region Orders Microservice
   # =====================
   orders-ms:
     depends_on:
@@ -67,7 +67,7 @@ services:
       - POSTGRES_DB=ordersdb
 
   # =====================
-  # Payments Microservice
+  # region Payments Microservice
   # =====================
   payments-ms:
     container_name: payments-ms
@@ -88,3 +88,32 @@ services:
     #   - PAYPAL_WEBHOOK_ID=${PAYPAL_WEBHOOK_ID}
     #   - PAYPAL_API_URL=${PAYPAL_API_URL}
     #   - PAYPAL_API_VERIFY_WEBHOOK_SIGNATURE=${PAYPAL_API_VERIFY_WEBHOOK_SIGNATURE}
+
+  # =====================
+  # region Auth Microservice
+  # =====================
+  auth-ms:
+    # depends_on:
+    #   - auth-db
+    container_name: auth-ms
+    build: ./auth-ms
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    env_file:
+      - ./auth-ms/.env.dev
+
+  # auth-db:
+  #   image: mongo:7.0
+  #   container_name: auth-db
+  #   restart: always
+  #   volumes:
+  #     - ./auth-ms/mongo:/data/db
+  #     - ./auth-ms/mongo/log:/var/log/mongodb/
+  #     - ./auth-ms/mongo/mongo-keyfile:/data/mongo-keyfile
+  #   ports:
+  #     - 27017:27017
+  #   command: ["--replSet", "rs0", "--keyFile", "/data/mongo-keyfile"]
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: ${AUTH_MONGO_INITDB_ROOT_USERNAME}
+  #     MONGO_INITDB_ROOT_PASSWORD: ${AUTH_MONGO_INITDB_ROOT_PASSWORD}
