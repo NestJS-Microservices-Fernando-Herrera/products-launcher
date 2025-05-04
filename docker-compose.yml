@@ -18,9 +18,6 @@ services:
     command: npm run start:dev
     env_file:
       - ./client-gateway/.env.dev
-    environment:
-      - PORT=3000
-      - NATS_SERVERS=nats://nats-server:4222
 
   # =====================
   # region Products Microservice
@@ -32,10 +29,6 @@ services:
     command: npm run start:dev
     env_file:
       - ./products-ms/.env.dev
-    # environment:
-    #   - PORT=3001
-    #   - DATABASE_URL=file:./dev.db
-    #   - NATS_SERVERS=nats://nats-server:4222
 
   # =====================
   # region Orders Microservice
@@ -49,10 +42,6 @@ services:
     command: npm run start:dev
     env_file:
       - ./orders-ms/.env.dev
-    # environment:
-    #   - PORT=3002
-    #   - DATABASE_URL=postgres://postgres:123456@orders-db:5432/ordersdb?schema=public
-    #   - NATS_SERVERS=nats://nats-server:4222
 
   orders-db:
     image: postgres:16.2
@@ -79,15 +68,6 @@ services:
     command: npm run start:dev
     env_file:
       - ./payments-ms/.env.dev
-    # environment:
-    #   - PORT=${PAYMENTS_MS_PORT}
-    #   - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
-    #   - PAYPAL_SECRET=${PAYPAL_SECRET}
-    #   - PAYPAL_SUCCESS_URL=${PAYPAL_SUCCESS_URL}
-    #   - PAYPAL_CANCEL_URL=${PAYPAL_CANCEL_URL}
-    #   - PAYPAL_WEBHOOK_ID=${PAYPAL_WEBHOOK_ID}
-    #   - PAYPAL_API_URL=${PAYPAL_API_URL}
-    #   - PAYPAL_API_VERIFY_WEBHOOK_SIGNATURE=${PAYPAL_API_VERIFY_WEBHOOK_SIGNATURE}
 
   # =====================
   # region Auth Microservice

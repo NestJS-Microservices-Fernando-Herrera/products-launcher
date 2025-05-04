@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+  nats-server:
+    image: nats:latest
+
+  # ==============
+  # region Client Gateway
+  # ==============
+  client-gateway:
+    build:
+      context: ./client-gateway
+      dockerfile: dockerfile.prod
+    image: client-gateway-prod
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
+    env_file:
+      - ./client-gateway/.env.prod
+
+  # =====================
+  # region Auth Microservice
+  # =====================
+  auth-ms:
+    build:
+      context: ./auth-ms
+      dockerfile: dockerfile.prod
+    image: auth-ms
+    env_file:
+      - ./auth-ms/.env.prod
+
+  # # =====================
+  # # region Products Microservice
+  # # =====================
+  products-ms:
+    build:
+      context: ./products-ms
+      dockerfile: dockerfile.prod
+    image: products-ms
+    env_file:
+      - ./products-ms/.env.prod
+
+  # =====================
+  # region Orders Microservice
+  # =====================
+  orders-ms:
+    build:
+      context: ./orders-ms
+      dockerfile: dockerfile.prod
+      args:
+        - ORDERS_DATABASE_URL=${ORDERS_DATABASE_URL}
+    image: orders-ms
+    env_file:
+      - ./orders-ms/.env.prod
+  
+  # =====================
+  # region Payments Microservice
+  # =====================
+  payments-ms:
+    build:
+      context: ./payments-ms
+      dockerfile: dockerfile.prod
+    env_file:
+      - ./payments-ms/.env.prod
+    ports:
+      - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
